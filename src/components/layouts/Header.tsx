@@ -31,7 +31,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-slate-950/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-slate-800/80 transition-colors duration-200">
-      <div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between  gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         {/* Logo */}
 
         <Link to="/" className="flex items-center gap-2 group shrink-0">
@@ -43,34 +43,43 @@ const Header: React.FC = () => {
           </span>
         </Link>
 
-        {/* Cart Icon */}
-        <button
-          onClick={() => setCartOpen(true)}
-          className=" ml-[45%] relative min-w-10  p-2 sm:hidden block rounded-xl border border-purple-500/20 bg-purple-600/10 hover:bg-purple-600/25 text-purple-400 hover:text-purple-300 transition-all cursor-pointer"
-          title="Open Cart"
-        >
-          <ShoppingCart className="w-4 h-4" />
-          {cart.length > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-purple-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
-              {cart.length}
-            </span>
-          )}
-        </button>
+        <div className="sm:hidden flex items-center gap-2 shrink-0">
+          {/* Theme Toggler */}
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              toggleTheme();
+            }}
+            className="flex size-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900 text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
+            title="Toggle Theme"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-purple-400" />
+            )}
+          </button>
 
-        {/* Theme Toggler */}
-        <button
-          onClick={toggleTheme}
-          className="sm:hidden block p-2 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900 text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
-          title="Toggle Theme"
-        >
-          {theme === "dark" ? (
-            <Sun className="w-4 h-4 text-amber-400" />
-          ) : (
-            <Moon className="w-4 h-4 text-purple-400" />
-          )}
-        </button>
+          {/* Cart Icon */}
+          <button
+            type="button"
+            onClick={() => setCartOpen(true)}
+            className="relative flex size-10 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-600/10 hover:bg-purple-600/25 text-purple-400 hover:text-purple-300 transition-all cursor-pointer"
+            title="Open Cart"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            {cart.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-purple-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
+                {cart.length}
+              </span>
+            )}
+          </button>
+        </div>
 
-        <div className="flex items-center justify-between gap-6 min-w-md ">
+        <div className="hidden sm:flex items-center justify-between gap-6 min-w-md">
           {/* Search Bar - only show/functional on store list, otherwise just search placeholder */}
           <div className="flex-1 min-w-sm hidden sm:block relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />

@@ -26,31 +26,6 @@ import heroTwoImage from "@/assets/images/Hero_2.png";
 
 
 const App: React.FC = () => {
-  // const {
-  //   games,
-  //   // searchQuery,
-  //   // selectedGenre,
-  //   // sortBy,
-  //   // setSelectedGenre,
-  //   // setSortBy,
-  //   // library,
-  // } = useStore();
-
-  // const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  // const [heroIndex, setHeroIndex] = useState(0);
-
-  // Hero carousel titles
-  // const heroGames = games.filter((game) => game.id === "cyberpunk-2077" || game.id === "elden-ring" || game.id === "gta-6");
-
-  // Autoplay hero carousel
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setHeroIndex((prev) => (prev + 1) % heroGames.length);
-  //   }, 8000);
-  //   return () => clearInterval(timer);
-  // }, [heroGames.length]);
-
-  // const activeHero = heroGames[heroIndex] || games[0];
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -101,7 +76,7 @@ const App: React.FC = () => {
   
 
   return (
-    <div className="min-h-screen text-slate-100 pb-20 space-y-12">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 pb-20 space-y-12">
       
       <section className="relative w-full overflow-hidden border-b border-slate-800 bg-slate-950">
         <div className="relative min-h-[360px] sm:min-h-[500px]">
@@ -113,18 +88,18 @@ const App: React.FC = () => {
           <div className="absolute inset-0 bg-slate-950/45" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-slate-950/10" />
 
-          <div className="relative z-10 flex min-h-[360px] max-w-7xl flex-col justify-center px-5 py-14 sm:min-h-[500px] sm:px-8 lg:px-12">
-            <div className="max-w-xl space-y-5">
-              <h1 className="text-3xl font-black uppercase tracking-wide text-white sm:text-5xl">
+          <div className="relative z-10 flex min-h-[360px] w-full max-w-7xl flex-col justify-center px-5 py-14 sm:min-h-[500px] sm:px-8 lg:px-12">
+            <div className="min-w-0 max-w-xl space-y-5">
+              <h1 className="max-w-full break-words text-2xl font-black uppercase leading-tight tracking-wide text-white sm:text-5xl">
                 {activeHeroSlide.title}
               </h1>
-              <p className="max-w-lg text-sm leading-6 text-slate-300 sm:text-base">
+              <p className="max-w-full text-sm leading-6 text-slate-300 sm:max-w-lg sm:text-base">
                 {activeHeroSlide.description}
               </p>
-              <div className="flex flex-wrap items-center gap-3 pt-1">
+              <div className="flex max-w-full md:w-full w-[50%] flex-col items-stretch gap-3 pt-1 sm:flex-row sm:flex-wrap sm:items-center">
                 <Button
                   onClick={() => scrollToSection("sell-your-account")}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg bg-pink-600 px-5 py-3 font-bold text-white shadow-lg shadow-pink-950/30 transition-colors hover:bg-pink-500"
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-pink-600 px-5 py-3 font-bold text-white shadow-lg shadow-pink-950/30 transition-colors hover:bg-pink-500 sm:justify-start"
                 >
                   <BadgeDollarSign className="h-5 w-5" />
                   <span>Sell Your Account</span>
@@ -207,12 +182,7 @@ const App: React.FC = () => {
               </Link>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:hidden gap-5 mt-6">
-            {gamesAccounts.map((account, index) => (
-              <GameC key={index} account={account} />
-            ))}
-          </div>
-          <div className="mt-6 hidden sm:block">
+          <div className="mt-6 block">
             <Carousel
               opts={{
                 align: "start",
@@ -221,16 +191,16 @@ const App: React.FC = () => {
             >
               <CarouselContent>
                 {gamesAccounts.map((account, index) => (
-                  <CarouselItem key={index} className="basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1">
                       <GameC account={account} />
                     </div>
                   </CarouselItem>
                 ))}
                 {/* See More Card */}
-                <CarouselItem className="basis-[85%] sm:basis-1/2 lg:basis-1/3">
+                <CarouselItem className=" md:basis-1/2 lg:basis-1/3">
                   <div className="p-1 h-full">
-                    <div className="h-full min-h-[420px] rounded-lg border border-dashed border-purple-500/40 bg-slate-900/50 hover:bg-slate-900 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group">
+                    <div className="h-full min-h-[380px] rounded-lg border border-dashed border-purple-500/40 bg-slate-900/50 hover:bg-slate-900 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group">
                       <div className="w-14 h-14 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span className="text-3xl text-purple-400">+</span>
                       </div>
@@ -272,12 +242,12 @@ const App: React.FC = () => {
               </Link>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:hidden gap-5 mt-6">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:hidden gap-5 mt-6">
             {gamesAccounts.map((account, index) => (
               <GameC key={index} account={account} />
             ))}
-          </div>
-          <div className="mt-6 hidden sm:block">
+          </div> */}
+          <div className="mt-6 block">
             <Carousel
               opts={{
                 align: "start",
@@ -286,14 +256,14 @@ const App: React.FC = () => {
             >
               <CarouselContent>
                 {gamesAccounts.map((account, index) => (
-                  <CarouselItem key={index} className="basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1">
                       <GameC account={account} />
                     </div>
                   </CarouselItem>
                 ))}
                 {/* See More Card */}
-                <CarouselItem className="basis-[85%] sm:basis-1/2 lg:basis-1/3">
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
                   <div className="p-1 h-full">
                     <div className="h-full min-h-[420px] rounded-lg border border-dashed border-purple-500/40 bg-slate-900/50 hover:bg-slate-900 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group">
                       <div className="w-14 h-14 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">

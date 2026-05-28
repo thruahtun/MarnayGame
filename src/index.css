@@ -121,10 +121,15 @@
   * {
     @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
-    }
   html {
-    @apply font-sans;
+    @apply min-h-full overflow-x-hidden bg-slate-950 font-sans;
+    color-scheme: dark;
+    scrollbar-color: rgb(51 65 85) rgb(2 6 23);
+    }
+  body {
+    @apply min-h-full overflow-x-hidden bg-slate-950 text-slate-100;
+    }
+  #root {
+    @apply min-h-screen overflow-x-hidden bg-slate-950;
     }
 }

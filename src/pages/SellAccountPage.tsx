@@ -69,18 +69,6 @@ const SellAccountPage = () => {
             </div>
           </div>
 
-          {/* <div className="rounded-lg border border-pink-500/20 bg-pink-500/10 p-5">
-            <p className="text-xs uppercase tracking-widest font-bold text-pink-300">
-              {page.accent}
-            </p>
-            <p className="mt-3 text-2xl font-black leading-tight text-white">
-              Send screenshots and account value details directly to our team.
-            </p>
-            <p className="mt-3 text-sm leading-6 text-slate-300">
-              {page.headline} We review the information, confirm the listing quality, and help prepare it for buyers.
-            </p>
-          </div> */}
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-4">
               <Sparkles className="w-5 h-5 text-purple-400" />
