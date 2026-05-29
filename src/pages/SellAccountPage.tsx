@@ -52,7 +52,9 @@ const SellAccountPage = () => {
                 Sell {page.name} Account
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-                Submit your account details for review. Clear photos, accurate stats, and contact information help buyers make faster decisions.
+                Submit your account details for review. Clear photos, accurate
+                stats, and contact information help buyers make faster
+                decisions.
               </p>
             </div>
           </div>
@@ -64,24 +66,36 @@ const SellAccountPage = () => {
               <MessageCircle className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-white">Contact Seller Team</h2>
-              <p className="text-sm text-slate-500">Choose Telegram or Viber to start your sale.</p>
+              <h2 className="text-xl font-black text-white">
+                Contact Seller Team
+              </h2>
+              <p className="text-sm text-slate-500">
+                Choose Telegram or Viber to start your sale.
+              </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-4">
               <Sparkles className="w-5 h-5 text-purple-400" />
-              <p className="mt-3 text-sm font-bold text-white">Fast Review</p>
+              <p className="mt-3 text-sm font-bold text-white">
+                {/* Fast Review */}
+                Acc ရောင်း/ဝယ် ရာတွင်
+              </p>
               <p className="mt-1 text-xs leading-5 text-slate-500">
-                Share rank, skins, price, and contact preference.
+                {/* Share rank, skins, price, and contact preference. */}
+                <p>📌 📌 Vc // Nrc // location လိုအပ်တာစစ်ယူပါမယ်</p>
+                <p>📌 3rd error // mt error ပါလျှင်မယူပါ</p>
               </p>
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-4">
               <BadgeDollarSign className="w-5 h-5 text-emerald-400" />
-              <p className="mt-3 text-sm font-bold text-white">Buyer Ready</p>
+              <p className="mt-3 text-sm font-bold text-white">
+                {/* Buyer Ready */}
+                ဝယ်သူအနေဖြင့်
+              </p>
               <p className="mt-1 text-xs leading-5 text-slate-500">
-                We shape the listing so buyers can scan it quickly.
+                Fake သတိပြုပေးပါ ⚡️
               </p>
             </div>
           </div>
@@ -108,7 +122,11 @@ const SellAccountPage = () => {
           <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 flex gap-3 text-sm text-emerald-100">
             <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
             <p>
-              Do not send passwords first. Share screenshots and basic account details, then wait for verification guidance.
+              {/* Do not send passwords first. Share screenshots and basic account
+              details, then wait for verification guidance. */}
+              𝐓𝐞𝐥𝐞𝐠𝐫𝐚𝐦 မှာ 𝐅𝐚𝐤𝐞 တွေရှိနေတာမိုလို အကောင့်အရောင်းအဝယ်ဘာပဲဖြစ်ဖြစ်
+              ငွေမလွှခင် 𝐔𝐬𝐞𝐫 𝐍𝐚𝐦𝐞 နဲ့ ငွေလွဲဖုန်း 𝐕𝐢𝐝𝐞𝐨 𝐂𝐚𝐥𝐥 သေချာစစ်ပြီးမှ
+              အရောင်းအဝယ်လုပ်ပေးပါခင်ဗျာ
             </p>
           </div>
         </div>

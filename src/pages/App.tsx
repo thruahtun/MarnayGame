@@ -77,7 +77,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 pb-20 space-y-12">
-      
       <section className="relative w-full overflow-hidden border-b border-slate-800 bg-slate-950">
         <div className="relative min-h-[360px] sm:min-h-[500px]">
           <img
@@ -118,7 +117,7 @@ const App: React.FC = () => {
             type="button"
             onClick={() =>
               setHeroIndex((currentIndex) =>
-                currentIndex === 0 ? heroSlides.length - 1 : currentIndex - 1
+                currentIndex === 0 ? heroSlides.length - 1 : currentIndex - 1,
               )
             }
             className="absolute hidden left-4 top-1/2 z-20 sm:flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-slate-950/60 text-2xl text-white transition-colors hover:bg-slate-900"
@@ -129,7 +128,9 @@ const App: React.FC = () => {
           <button
             type="button"
             onClick={() =>
-              setHeroIndex((currentIndex) => (currentIndex + 1) % heroSlides.length)
+              setHeroIndex(
+                (currentIndex) => (currentIndex + 1) % heroSlides.length,
+              )
             }
             className="absolute hidden right-4 top-1/2 z-20 sm:flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-slate-950/60 text-2xl text-white transition-colors hover:bg-slate-900"
             aria-label="Next hero slide"
@@ -138,7 +139,6 @@ const App: React.FC = () => {
           </button>
         </div>
       </section>
-      
 
       {/* 2. Core Catalog & Browsing Filter Bar */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -157,14 +157,20 @@ const App: React.FC = () => {
         </div>
 
         {/* ML or PUBG Filter */}
-        <div className="flex items-center gap-4 mt-15 sm:hidden ">
-          <div onClick={() => scrollToSection('mobile-legends')} className="bg-pink-500 text-white px-4 py-2 rounded-lg text-md font-medium hover:bg-pink-600 transition-colors">
+        {/* <div className="flex items-center gap-4 mt-15 sm:hidden ">
+          <div
+            onClick={() => scrollToSection("mobile-legends")}
+            className="bg-pink-500 text-white px-4 py-2 rounded-lg text-md font-medium hover:bg-pink-600 transition-colors"
+          >
             Mobile Legends Accounts
           </div>
-          <div onClick={() => scrollToSection('pubg')} className="bg-pink-500 text-white px-4 py-2 rounded-lg text-md font-medium hover:bg-pink-600 transition-colors">
+          <div
+            onClick={() => scrollToSection("pubg")}
+            className="bg-pink-500 text-white px-4 py-2 rounded-lg text-md font-medium hover:bg-pink-600 transition-colors"
+          >
             PUBG Accounts
           </div>
-        </div>
+        </div> */}
 
         {/* ML Account Show */}
         <div className="sm:mt-25 mt-5" id="mobile-legends">
@@ -191,7 +197,10 @@ const App: React.FC = () => {
             >
               <CarouselContent>
                 {gamesAccounts.map((account, index) => (
-                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem
+                    key={index}
+                    className="md:basis-1/2 lg:basis-1/3"
+                  >
                     <div className="p-1">
                       <GameC account={account} />
                     </div>
@@ -256,7 +265,10 @@ const App: React.FC = () => {
             >
               <CarouselContent>
                 {gamesAccounts.map((account, index) => (
-                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem
+                    key={index}
+                    className="md:basis-1/2 lg:basis-1/3"
+                  >
                     <div className="p-1">
                       <GameC account={account} />
                     </div>
@@ -311,7 +323,10 @@ const App: React.FC = () => {
                   Sell Your Account
                 </h2>
                 <p className="mt-3 text-sm leading-6 text-slate-400 max-w-xl">
-                  Create a listing request for your game account and prepare the key details buyers need to review before contacting you.
+                  {/* Create a listing request for your game account and prepare the key details buyers need to review before contacting you. */}
+                  Mobile Legends/PUBG အကောင့်များကို ဈေးနှုန်းမှန်ကန်
+                  ယုံကြည်စိတ်ချစွာဖြင့် Marnay Storeတွင် အရောင်းအဝယ်၊အလဲအထပ်
+                  ပြုလုပ်လိုက်ပါ။
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 text-xs text-slate-300">
