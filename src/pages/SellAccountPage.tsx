@@ -5,6 +5,7 @@ import pubgImage from "@/assets/images/pubj.jpg";
 
 const telegramLink = "https://t.me/MarnayGameStore";
 const viberLink = "viber://chat?number=%2B959000000000";
+const messengerLink = "https://m.me/MarnayGameStore";
 
 const sellerPageData = {
   "mobile-legends": {
@@ -95,12 +96,16 @@ const SellAccountPage = () => {
                 ဝယ်သူအနေဖြင့်
               </p>
               <p className="mt-1 text-xs leading-5 text-slate-500">
-                Fake သတိပြုပေးပါ ⚡️
+                <p>⚡️ Fake သတိပြုပေးပါ </p>
+                <p>
+                  ⭐️ ငွေလွှရာတွင် 09251355782 တလုံးထဲသုံးပါတယ်
+                  အရေးကြီးလျှင်ငွေလွှဖုန်းကို ဖုန်းဆက်နိုင်ပါတယ်
+                </p>
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <a
               href={telegramLink}
               target="_blank"
@@ -112,10 +117,21 @@ const SellAccountPage = () => {
             </a>
             <a
               href={viberLink}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-bold text-white hover:bg-purple-700 transition-colors"
             >
               <PhoneCall className="w-4 h-4" />
               <span>Viber</span>
+            </a>
+            <a
+              href={messengerLink}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex col-span-2 sm:col-span-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Messenger</span>
             </a>
           </div>
 
