@@ -133,3 +133,15 @@
     @apply min-h-screen overflow-x-hidden bg-slate-950;
     }
 }
+
+@keyframes network-loading {
+  0% {
+    transform: translateX(-110%);
+  }
+  55% {
+    transform: translateX(55%);
+  }
+  100% {
+    transform: translateX(170%);
+  }
+}

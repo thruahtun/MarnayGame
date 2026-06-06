@@ -3,6 +3,7 @@ import b from "@/assets/images/2.jpg";
 
 export interface GameAccount {
     id: number,
+    gameType: "mobile-legends" | "pubg",
     name: string,
     description: string,
     price: string,
@@ -13,6 +14,7 @@ export interface GameAccount {
 export const gamesAccounts: GameAccount[] = [
   {
     id: 1,
+    gameType: "mobile-legends",
     name: "Chou Epic Skin",
     description: "A fast-paced MOBA game where you battle against opponents in real-time.",
     price: "450,000",
@@ -21,7 +23,8 @@ export const gamesAccounts: GameAccount[] = [
   },
   {
     id: 2,
-    name: "Cluade Epic Skin",
+    gameType: "pubg",
+    name: "PUBG Conqueror Account",
     description: "A battle royale game with intense combat and strategic gameplay.",
     price: "100,000",
     image: b,
@@ -29,6 +32,7 @@ export const gamesAccounts: GameAccount[] = [
   },
   {
     id: 3,
+    gameType: "mobile-legends",
     name: "Chou Epic Skin",
     description: "A fast-paced MOBA game where you battle against opponents in real-time.",
     price: "450,000",
@@ -37,7 +41,8 @@ export const gamesAccounts: GameAccount[] = [
   },
   {
     id: 4,
-    name: "Cluade Epic Skin",
+    gameType: "pubg",
+    name: "PUBG Royal Pass Account",
     description: "A battle royale game with intense combat and strategic gameplay.",
     price: "100,000",
     image: b,
@@ -45,6 +50,7 @@ export const gamesAccounts: GameAccount[] = [
   },
   {
     id: 5,
+    gameType: "mobile-legends",
     name: "Chou Epic Skin",
     description: "A fast-paced MOBA game where you battle against opponents in real-time.",
     price: "450,000",

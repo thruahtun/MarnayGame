@@ -1,12 +1,14 @@
 import Footer from "@/components/layouts/Footer";
 import Header  from "@/components/layouts/Header";
-import { Outlet, useLocation } from "react-router";
+import NetworkLoading from "@/components/layouts/NetworkLoading";
+import { Outlet, useLocation, useNavigation } from "react-router";
 import { StoreProvider } from "@/context/StoreContext";
 import CartDrawer from "@/components/cart/CartDrawer";
 import { useEffect } from "react";
 
 const RootLayout = () => {
     const { pathname } = useLocation();
+    const navigation = useNavigation();
 
     useEffect(() => {
         window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -22,6 +24,7 @@ const RootLayout = () => {
                 </main>
                 <Footer />
                 <CartDrawer />
+                <NetworkLoading isRouteLoading={navigation.state !== "idle"} />
             </div>
         </StoreProvider>
      );
