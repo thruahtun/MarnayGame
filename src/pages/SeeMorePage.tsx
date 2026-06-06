@@ -1,7 +1,15 @@
-import { ArrowLeft, Gamepad2, ShieldCheck } from "lucide-react";
-import { Link, Navigate, useParams } from "react-router";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  CircleCheckBig,
+  Gamepad2,
+  ShieldCheck,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, Navigate, useParams, useSearchParams } from "react-router";
 
-import GameC from "@/components/game/GameC";
+import denoeProfileImage from "@/assets/images/denoe-profile.jpg";
 import { gamesAccounts, type GameAccount } from "@/lib/gamesAccounts";
 import mobileLegendImage from "@/assets/images/mobilelegend.jpg";
 import pubgImage from "@/assets/images/pubj.jpg";
@@ -19,13 +27,15 @@ const seeMoreData: Record<
 > = {
   "mobile-legends": {
     title: "Mobile Legends Accounts",
-    description: "Browse ML accounts by skins, heroes, rank, and seller details.",
+    description:
+      "Browse ML accounts by skins, heroes, rank, and seller details.",
     image: mobileLegendImage,
     accent: "text-pink-400",
   },
   pubg: {
     title: "PUBG Accounts",
-    description: "Browse PUBG accounts by tier, outfits, UC, weapons, and inventory.",
+    description:
+      "Browse PUBG accounts by tier, outfits, UC, weapons, and inventory.",
     image: pubgImage,
     accent: "text-emerald-400",
   },
@@ -34,15 +44,54 @@ const seeMoreData: Record<
 const isGameType = (value: string | undefined): value is GameType =>
   value === "mobile-legends" || value === "pubg";
 
+const smallScreenAccountsPerPage = 4;
+const largeScreenAccountsPerPage = 6;
+
 const SeeMorePage = () => {
   const { gameType } = useParams();
+  const [searchParams] = useSearchParams();
+  const [accountsPerPage, setAccountsPerPage] = useState(
+    smallScreenAccountsPerPage,
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const updateAccountsPerPage = () => {
+      setAccountsPerPage(
+        mediaQuery.matches
+          ? largeScreenAccountsPerPage
+          : smallScreenAccountsPerPage,
+      );
+    };
+
+    updateAccountsPerPage();
+    mediaQuery.addEventListener("change", updateAccountsPerPage);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateAccountsPerPage);
+    };
+  }, []);
 
   if (!isGameType(gameType)) {
     return <Navigate to="/see-more/mobile-legends" replace />;
   }
 
   const page = seeMoreData[gameType];
-  const accounts = gamesAccounts.filter((account) => account.gameType === gameType);
+  const accounts = gamesAccounts.filter(
+    (account) => account.gameType === gameType,
+  );
+  const requestedPage = Number(searchParams.get("page") || "1");
+  const totalPages = Math.max(1, Math.ceil(accounts.length / accountsPerPage));
+  const currentPage = Number.isInteger(requestedPage)
+    ? Math.min(Math.max(requestedPage, 1), totalPages)
+    : 1;
+  const firstAccountIndex = (currentPage - 1) * accountsPerPage;
+  const paginatedAccounts = accounts.slice(
+    firstAccountIndex,
+    firstAccountIndex + accountsPerPage,
+  );
+  const getPageLink = (pageNumber: number) =>
+    `/see-more/${gameType}?page=${pageNumber}`;
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
@@ -100,7 +149,7 @@ const SeeMorePage = () => {
 
       <div className="flex flex-wrap gap-3">
         <Link
-          to="/see-more/mobile-legends"
+          to="/see-more/mobile-legends?page=1"
           className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${
             gameType === "mobile-legends"
               ? "bg-pink-500 text-white"
@@ -110,7 +159,7 @@ const SeeMorePage = () => {
           Mobile Legends
         </Link>
         <Link
-          to="/see-more/pubg"
+          to="/see-more/pubg?page=1"
           className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${
             gameType === "pubg"
               ? "bg-pink-500 text-white"
@@ -121,11 +170,123 @@ const SeeMorePage = () => {
         </Link>
       </div>
 
-      <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {accounts.map((account) => (
-          <GameC key={account.id} account={account} />
+      <section className="grid gap-1.5  md:gap-5 grid-cols-2 lg:grid-cols-3">
+        {paginatedAccounts.map((account) => (
+          <Link
+            key={account.id}
+            to={`/accounts/${account.id}`}
+            className="block w-full min-w-0 overflow-hidden rounded-lg shadow-md hover:bg-slate-900/80 border border-slate-800/80 hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]  transition-all duration-300"
+          >
+            <div className="relative group">
+              <img
+                src={account.image}
+                alt="Game Cover"
+                className="w-full h-40 sm:h-60 xs:h-35 object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+              />
+              <p className="text-sm text-green-500 rounded-sm py-0.5 px-1 bg-green-600/20 mt-1 flex items-center gap-1 absolute top-2 right-2">
+                <CircleCheckBig className="w-4 h-4" /> For rental
+              </p>
+            </div>
+
+            <div className="p-2 sm:p-4">
+              <div className="flex items-center justify-between gap-2 border-b border-b-mauve-500 pb-2">
+                <h3 className="sm:text-lg xs:text-[10px] font-bold ">
+                  {account.name}
+                </h3>
+                <p className="sm:text-sm xs:text-[10px] text-gray-400">
+                  {account.date}
+                </p>
+              </div>
+
+              <div className="sm:mt-4 mt-2 flex items-center justify-between md:gap-15  gap-10">
+                <div className=" flex items-center gap-1 sm:gap-3">
+                  <img
+                    src={denoeProfileImage}
+                    alt="Denoe profile"
+                    className="sm:h-12 sm:w-12 xs:h-8 xs:w-8 shrink-0 rounded-full border border-slate-700 object-cover"
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate sm:text-base xs:text-[9px] text-sm font-bold text-white">
+                      Denoe
+                    </p>
+                    <p className="truncate sm:text-sm xs:text-[9px] font-medium text-slate-400">
+                      Verified Seller
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <p className="sm:text-lg xs:text-[10px] tracking-wider text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-pink-500 to-rose-400 ">
+                    MMK {account.price}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
         ))}
       </section>
+
+      {totalPages > 1 && (
+        <nav
+          className="flex flex-col items-center justify-between gap-4 rounded-lg md:border md:border-slate-800 md:bg-slate-900/50 p-4 sm:flex-row"
+          aria-label="Account pagination"
+        >
+          <p className="text-sm font-medium text-slate-400">
+            Page {currentPage} of {totalPages}
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {currentPage > 1 ? (
+              <Link
+                to={getPageLink(currentPage - 1)}
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm font-bold text-slate-300 transition-colors hover:text-white"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Link>
+            ) : (
+              <span className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/50 px-3 py-2 text-sm font-bold text-slate-600">
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </span>
+            )}
+
+            {Array.from({ length: totalPages }, (_, index) => {
+              const pageNumber = index + 1;
+              return (
+                <Link
+                  key={pageNumber}
+                  to={getPageLink(pageNumber)}
+                  aria-current={
+                    currentPage === pageNumber ? "page" : undefined
+                  }
+                  className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-black transition-colors ${
+                    currentPage === pageNumber
+                      ? "bg-pink-500 text-white"
+                      : "border border-slate-800 bg-slate-950 text-slate-300 hover:text-white"
+                  }`}
+                >
+                  {pageNumber}
+                </Link>
+              );
+            })}
+
+            {currentPage < totalPages ? (
+              <Link
+                to={getPageLink(currentPage + 1)}
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm font-bold text-slate-300 transition-colors hover:text-white"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <span className="inline-flex cursor-not-allowed items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/50 px-3 py-2 text-sm font-bold text-slate-600">
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </span>
+            )}
+          </div>
+        </nav>
+      )}
     </div>
   );
 };

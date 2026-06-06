@@ -1,5 +1,6 @@
 
 import { CircleCheckBig } from "lucide-react";
+import { Link } from "react-router";
 
 import type { GameAccount } from "@/lib/gamesAccounts";
 import denoeProfileImage from "@/assets/images/denoe-profile.jpg";
@@ -8,8 +9,10 @@ import denoeProfileImage from "@/assets/images/denoe-profile.jpg";
 
 const GameC = ({ account }: { account: GameAccount }) => {
     return (
-      <>
-        <div className="w-full min-w-0 overflow-hidden rounded-lg shadow-md hover:bg-slate-900/80 border border-slate-800/80 hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]  transition-all duration-300">
+        <Link
+          to={`/accounts/${account.id}`}
+          className="block w-full min-w-0 overflow-hidden rounded-lg shadow-md hover:bg-slate-900/80 border border-slate-800/80 hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]  transition-all duration-300"
+        >
           <div className="relative group">
             <img
               src={account.image}
@@ -50,8 +53,7 @@ const GameC = ({ account }: { account: GameAccount }) => {
               </div>
             </div>
           </div>
-        </div>
-      </>
+        </Link>
     );  
 }
  

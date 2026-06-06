@@ -46,6 +46,7 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    --breakpoint-xs: 350px;
 }
 
 :root {
@@ -145,3 +146,38 @@
     transform: translateX(170%);
   }
 }
+
+@keyframes account-carousel-next {
+  0% {
+    opacity: 0;
+    transform: translateX(28px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes account-carousel-previous {
+  0% {
+    opacity: 0;
+    transform: translateX(-28px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.account-carousel-image {
+  will-change: opacity, transform;
+}
+
+.account-carousel-image-next {
+  animation: account-carousel-next 1s ease-out both;
+}
+
+.account-carousel-image-previous {
+  animation: account-carousel-previous 1s ease-out both;
+}
+
