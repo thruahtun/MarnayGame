@@ -35,7 +35,7 @@ const Header: React.FC = () => {
         {/* Logo */}
 
         <Link to="/" className="flex items-center gap-2 group shrink-0">
-          <div className="p-2 rounded-xl bg-purple-600/10 border border-purple-500/20 group-hover:border-purple-500/40 transition-colors">
+          <div className="p-2 rounded-xl bg-purple-600/10   group-hover:border-purple-500/40 transition-colors">
             <Gamepad2 className="w-6 h-6 text-purple-400 group-hover:text-purple-300 transition-colors" />
           </div>
           <span className="font-black text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400">
