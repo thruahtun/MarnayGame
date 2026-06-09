@@ -20,7 +20,7 @@ export const gamesAccounts: GameAccount[] = [
   {
     id: 1,
     gameType: "mobile-legends",
-    name: "Chou Epic Skin",
+    name: "Chou Epic Skin is available now for sale in Marnay Marketplace with affordable price",
     description: "A fast-paced MOBA game where you battle against opponents in real-time.",
     price: "450,000",
     image: a,

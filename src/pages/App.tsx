@@ -183,23 +183,23 @@ const App: React.FC = () => {
               }}
               className="w-full"
             >
-              <CarouselContent>
+              <CarouselContent className="items-stretch">
                 {mobileLegendAccounts.map((account, index) => (
                   <CarouselItem
                     key={index}
                     className="md:basis-1/2 lg:basis-1/3"
                   >
-                    <div className="p-1">
+                    <div className="h-full p-1">
                       <GameC account={account} />
                     </div>
                   </CarouselItem>
                 ))}
                 {/* See More Card */}
                 <CarouselItem className=" md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1 h-full">
+                  <div className="h-full p-1">
                     <Link
                       to="/see-more/mobile-legends"
-                      className="h-full min-h-[380px] rounded-lg border border-dashed border-purple-500/40 bg-slate-900/50 hover:bg-slate-900 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group"
+                      className="flex h-full min-h-[320px] flex-col items-center justify-center rounded-lg border border-dashed border-purple-500/40 bg-slate-900/50 transition-all duration-300 hover:bg-slate-900 cursor-pointer group sm:min-h-[360px]"
                     >
                       <div className="w-14 h-14 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span className="text-3xl text-purple-400">+</span>
@@ -257,23 +257,23 @@ const App: React.FC = () => {
               }}
               className="w-full"
             >
-              <CarouselContent>
+              <CarouselContent className="items-stretch">
                 {pubgAccounts.map((account, index) => (
                   <CarouselItem
                     key={index}
                     className="md:basis-1/2 lg:basis-1/3"
                   >
-                    <div className="p-1">
+                    <div className="h-full p-1">
                       <GameC account={account} />
                     </div>
                   </CarouselItem>
                 ))}
                 {/* See More Card */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1 h-full">
+                  <div className="h-full p-1">
                     <Link
                       to="/see-more/pubg"
-                      className="h-full min-h-[420px] rounded-lg border border-dashed border-purple-500/40 bg-slate-900/50 hover:bg-slate-900 transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group"
+                      className="flex h-full min-h-[320px] flex-col items-center justify-center rounded-lg border border-dashed border-purple-500/40 bg-slate-900/50 transition-all duration-300 hover:bg-slate-900 cursor-pointer group sm:min-h-[360px]"
                     >
                       <div className="w-14 h-14 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <span className="text-3xl text-purple-400">+</span>

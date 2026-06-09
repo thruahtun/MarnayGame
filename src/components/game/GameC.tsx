@@ -11,27 +11,29 @@ const GameC = ({ account }: { account: GameAccount }) => {
     return (
         <Link
           to={`/accounts/${account.id}`}
-          className="block w-full min-w-0 overflow-hidden rounded-lg shadow-md hover:bg-slate-900/80 border border-slate-800/80 hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]  transition-all duration-300"
+          className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-lg border border-slate-800/80 shadow-md transition-all duration-300 hover:border-purple-500/40 hover:bg-slate-900/80 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]"
         >
-          <div className="relative group">
+          <div className="relative shrink-0 group">
             <img
               src={account.image}
               alt="Game Cover"
-              className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+              className="h-48 w-full cursor-pointer object-cover transition-transform duration-500 group-hover:scale-105 sm:h-52 md:h-56"
             />
-            <p className="text-sm text-green-500 rounded-sm py-0.5 px-1 bg-green-600/20 mt-1 flex items-center gap-1 absolute top-2 right-2">
-              <CircleCheckBig className="w-4 h-4" /> For rental
+            <p className="absolute right-2 top-2 flex items-center gap-1 rounded-sm bg-green-600/20 px-1 py-0.5 text-sm text-green-500">
+              <CircleCheckBig className="h-4 w-4" /> For rental
             </p>
           </div>
 
-          <div className="p-4">
-            <div className="flex items-center justify-between gap-2 border-b border-b-mauve-500 pb-2">
-              <h3 className="text-md font-bold ">{account.name}</h3>
-              <p className="text-sm text-gray-400">{account.date}</p>
+          <div className="flex flex-1 flex-col p-4">
+            <div className="flex items-start justify-between gap-2 border-b border-b-mauve-500 pb-2">
+              <h3 className="line-clamp-2 min-w-0 flex-1 text-base font-bold leading-snug text-white">
+                {account.name}
+              </h3>
+              <p className="shrink-0 text-sm text-gray-400">{account.date}</p>
             </div>
 
-            <div className="mt-4 flex items-center justify-between gap-10 md:gap-15 xs:gap-20">
-              <div className=" flex items-center gap-3">
+            <div className="mt-auto flex items-center justify-between gap-3 pt-4">
+              <div className="flex min-w-0 items-center gap-3">
                 <img
                   src={denoeProfileImage}
                   alt="Denoe profile"
@@ -46,11 +48,9 @@ const GameC = ({ account }: { account: GameAccount }) => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <p className="text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 mr-2">
-                  MMK {account.price}
-                </p>
-              </div>
+              <p className="shrink-0 text-base font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 sm:text-lg">
+                MMK {account.price}
+              </p>
             </div>
           </div>
         </Link>

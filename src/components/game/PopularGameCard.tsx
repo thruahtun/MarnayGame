@@ -7,14 +7,14 @@ const PopularGameCard = () => {
 
       {
         gamesNames.map((game) => (
-            <div key={game.id} className="rounded-lg shadow-md overflow-hidden  hover:bg-slate-900/80 border border-slate-800/80 hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]  transition-all duration-300 relative">
+            <div key={game.id} className="relative overflow-hidden rounded-lg border border-slate-800/80 shadow-md transition-all duration-300 hover:border-purple-500/40 hover:bg-slate-900/80 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]">
                 <img
                     src={game.coverImage}
                     alt="Game Cover"
-                    className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                    className="h-48 w-full cursor-pointer object-cover transition-transform duration-500 group-hover:scale-105 sm:h-52 md:h-56"
                 />
-                <div className="p-4 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white">
-                    <h3 className="text-lg font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-10 text-white">
+                    <h3 className="line-clamp-2 text-lg font-bold leading-snug tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400">
                     {game.name}
                     </h3>
                 </div>
