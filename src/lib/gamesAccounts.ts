@@ -1,6 +1,9 @@
 import a from "@/assets/images/1.jpg";
 import b from "@/assets/images/2.jpg";
 import c from "@/assets/images/account-gallery-collector.png";
+import d from "@/assets/images/4.jpg";
+import e from "@/assets/images/5.jpg";
+import f from "@/assets/images/6.jpg";
 
 export interface GameAccount {
     id: number,
@@ -21,7 +24,7 @@ export const gamesAccounts: GameAccount[] = [
     description: "A fast-paced MOBA game where you battle against opponents in real-time.",
     price: "450,000",
     image: a,
-    galleryImages: [a, b, c],
+    galleryImages: [a, b, c,d, e, f],
     date: "27/5/2026"
   },
   {
@@ -29,7 +32,7 @@ export const gamesAccounts: GameAccount[] = [
     gameType: "pubg",
     name: "PUBG Conqueror Account",
     description: "A battle royale game with intense combat and strategic gameplay.",
-    price: "100,000",
+    price: "250,000",
     image: b,
     galleryImages: [b, a, c],
     date: "27/5/2026"

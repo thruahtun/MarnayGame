@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   UserRound,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router";
 
 import denoeProfileImage from "@/assets/images/denoe-profile.jpg";
@@ -50,9 +50,9 @@ const AccountDetailPage = () => {
   const selectedImage = relatedImages[selectedImageIndex] || detailAccount.image;
   const hasMultipleImages = relatedImages.length > 1;
 
-  useEffect(() => {
-    setSelectedImageIndex(0);
-  }, [detailAccount.id]);
+  // useEffect(() => {
+  //   setSelectedImageIndex(0);
+  // }, [detailAccount.id]);
 
   const showPreviousImage = () => {
     setImageDirection("previous");

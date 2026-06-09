@@ -1,10 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { gamesData } from "@/lib/gamesData";
-import type { Game, Review } from "@/lib/gamesData";
 
 interface StoreContextType {
-  games: Game[];
   cart: string[]; // game IDs
   wishlist: string[]; // game IDs
   library: string[]; // game IDs (purchased)
@@ -22,7 +19,7 @@ interface StoreContextType {
   toggleWishlist: (id: string) => void;
   purchaseGames: (ids: string[]) => void;
   setInstalled: (id: string) => void;
-  addReview: (gameId: string, rating: number, comment: string, userName: string) => void;
+  // addReview: (gameId: string, rating: number, comment: string, userName: string) => void;
   setSearchQuery: (query: string) => void;
   setSelectedGenre: (genre: string) => void;
   setSelectedPlatform: (platform: string) => void;
@@ -33,10 +30,6 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [games, setGames] = useState<Game[]>(() => {
-    const saved = localStorage.getItem("marnay_games");
-    return saved ? JSON.parse(saved) : gamesData;
-  });
 
   const [cart, setCart] = useState<string[]>(() => {
     const saved = localStorage.getItem("marnay_cart");
@@ -68,10 +61,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [selectedPlatform, setSelectedPlatform] = useState("All");
   const [sortBy, setSortBy] = useState("relevance");
   const [cartOpen, setCartOpen] = useState(false);
-
-  useEffect(() => {
-    localStorage.setItem("marnay_games", JSON.stringify(games));
-  }, [games]);
 
   useEffect(() => {
     localStorage.setItem("marnay_cart", JSON.stringify(cart));
@@ -140,35 +129,35 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const addReview = (gameId: string, rating: number, comment: string, userName: string) => {
-    setGames((prevGames) =>
-      prevGames.map((game) => {
-        if (game.id === gameId) {
-          const newReview: Review = {
-            id: `rev-${Date.now()}`,
-            userName: userName || "Anonymous Gamer",
-            rating,
-            date: new Date().toLocaleDateString("en-US", {
-              month: "short",
-              day: "2-digit",
-              year: "numeric",
-            }),
-            comment,
-          };
-          const updatedReviews = [newReview, ...game.reviews];
-          const avgRating =
-            updatedReviews.reduce((sum, review) => sum + review.rating, 0) /
-            updatedReviews.length;
-          return {
-            ...game,
-            rating: parseFloat(avgRating.toFixed(1)),
-            reviews: updatedReviews,
-          };
-        }
-        return game;
-      })
-    );
-  };
+  // const addReview = (gameId: string, rating: number, comment: string, userName: string) => {
+  //   setGames((prevGames) =>
+  //     prevGames.map((game) => {
+  //       if (game.id === gameId) {
+  //         const newReview: Review = {
+  //           id: `rev-${Date.now()}`,
+  //           userName: userName || "Anonymous Gamer",
+  //           rating,
+  //           date: new Date().toLocaleDateString("en-US", {
+  //             month: "short",
+  //             day: "2-digit",
+  //             year: "numeric",
+  //           }),
+  //           comment,
+  //         };
+  //         const updatedReviews = [newReview, ...game.reviews];
+  //         const avgRating =
+  //           updatedReviews.reduce((sum, review) => sum + review.rating, 0) /
+  //           updatedReviews.length;
+  //         return {
+  //           ...game,
+  //           rating: parseFloat(avgRating.toFixed(1)),
+  //           reviews: updatedReviews,
+  //         };
+  //       }
+  //       return game;
+  //     })
+  //   );
+  // };
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
@@ -177,7 +166,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider
       value={{
-        games,
         cart,
         wishlist,
         library,
@@ -195,7 +183,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         toggleWishlist,
         purchaseGames,
         setInstalled,
-        addReview,
         setSearchQuery,
         setSelectedGenre,
         setSelectedPlatform,

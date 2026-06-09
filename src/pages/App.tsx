@@ -160,22 +160,6 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* ML or PUBG Filter */}
-        {/* <div className="flex items-center gap-4 mt-15 sm:hidden ">
-          <div
-            onClick={() => scrollToSection("mobile-legends")}
-            className="bg-pink-500 text-white px-4 py-2 rounded-lg text-md font-medium hover:bg-pink-600 transition-colors"
-          >
-            Mobile Legends Accounts
-          </div>
-          <div
-            onClick={() => scrollToSection("pubg")}
-            className="bg-pink-500 text-white px-4 py-2 rounded-lg text-md font-medium hover:bg-pink-600 transition-colors"
-          >
-            PUBG Accounts
-          </div>
-        </div> */}
-
         {/* ML Account Show */}
         <div className="sm:mt-25 mt-5" id="mobile-legends">
           <div className="flex items-center justify-between">
@@ -232,7 +216,7 @@ const App: React.FC = () => {
                   </div>
                 </CarouselItem>
               </CarouselContent>
-              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-400" />
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-400"  />
               <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 text-pink-400" />
             </Carousel>
           </div>

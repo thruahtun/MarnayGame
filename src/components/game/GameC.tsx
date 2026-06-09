@@ -30,7 +30,7 @@ const GameC = ({ account }: { account: GameAccount }) => {
               <p className="text-sm text-gray-400">{account.date}</p>
             </div>
 
-            <div className="mt-4 flex items-center justify-between gap-2">
+            <div className="mt-4 flex items-center justify-between gap-10 md:gap-15 xs:gap-20">
               <div className=" flex items-center gap-3">
                 <img
                   src={denoeProfileImage}
@@ -46,9 +46,9 @@ const GameC = ({ account }: { account: GameAccount }) => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 mt-5">
+              <div className="flex items-center gap-2">
                 <p className="text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 mr-2">
-                  MMK 48,000
+                  MMK {account.price}
                 </p>
               </div>
             </div>
