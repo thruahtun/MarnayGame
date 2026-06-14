@@ -6,9 +6,9 @@ import React, { useEffect, useState } from "react";
 import { ArrowRight, BadgeDollarSign, Gamepad2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PopularGameCard from "@/components/game/PopularGameCard";
-import { gamesNames } from "@/lib/gamesStores";
 import GameC from "@/components/game/GameC";
 import { Link } from "react-router";
+import { getHomeData, type HomeData } from "@/lib/api";
 
 import {
   Carousel,
@@ -17,7 +17,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { gamesAccounts } from "@/lib/gamesAccounts";
 import mobileLegendImage from "@/assets/images/mobilelegend.jpg";
 import pubgImage from "@/assets/images/pubj.jpg";
 import heroOneImage from "@/assets/images/Hero_1.png";
@@ -62,12 +61,10 @@ const App: React.FC = () => {
     },
   ];
 
+  const [homeData, setHomeData] = useState<HomeData | null>(null);
   const [heroIndex, setHeroIndex] = useState(0);
+  const [homeError, setHomeError] = useState("");
   const activeHeroSlide = heroSlides[heroIndex];
-  const mobileLegendAccounts = gamesAccounts.filter(
-    (account) => account.gameType === "mobile-legends",
-  );
-  const pubgAccounts = gamesAccounts.filter((account) => account.gameType === "pubg");
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -76,6 +73,16 @@ const App: React.FC = () => {
 
     return () => window.clearInterval(timer);
   }, [heroSlides.length]);
+
+  useEffect(() => {
+    getHomeData()
+      .then(setHomeData)
+      .catch(() => setHomeError("Unable to load store data."));
+  }, []);
+
+  const games = homeData?.games ?? [];
+  const mobileLegendsListings = homeData?.mobile_legends_listings ?? [];
+  const pubgListings = homeData?.pubg_listings ?? [];
 
   
 
@@ -153,10 +160,14 @@ const App: React.FC = () => {
             <span>Popular Games</span>
           </h2>
           <p className="text-slate-500 text-sm mt-1">
-            {gamesNames.length} games matching your criteria
+            {games.length} games matching your criteria
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
-            <PopularGameCard />
+            {homeError ? (
+              <p className="text-sm text-rose-400">{homeError}</p>
+            ) : (
+              <PopularGameCard games={games} />
+            )}
           </div>
         </div>
 
@@ -184,7 +195,7 @@ const App: React.FC = () => {
               className="w-full"
             >
               <CarouselContent className="items-stretch">
-                {mobileLegendAccounts.map((account, index) => (
+                {mobileLegendsListings.map((account, index) => (
                   <CarouselItem
                     key={index}
                     className="md:basis-1/2 lg:basis-1/3"
@@ -216,7 +227,7 @@ const App: React.FC = () => {
                   </div>
                 </CarouselItem>
               </CarouselContent>
-              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-400"  />
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-400" />
               <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 text-pink-400" />
             </Carousel>
           </div>
@@ -258,7 +269,7 @@ const App: React.FC = () => {
               className="w-full"
             >
               <CarouselContent className="items-stretch">
-                {pubgAccounts.map((account, index) => (
+                {pubgListings.map((account, index) => (
                   <CarouselItem
                     key={index}
                     className="md:basis-1/2 lg:basis-1/3"

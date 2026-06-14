@@ -1,25 +1,28 @@
+
+
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowUpDown,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  CircleCheckBig,
+  //CircleCheckBig,
   Gamepad2,
   ShieldCheck,
   SlidersHorizontal,
-  X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useParams, useSearchParams } from "react-router";
 
-import denoeProfileImage from "@/assets/images/denoe-profile.jpg";
-import { gamesAccounts, type GameAccount } from "@/lib/gamesAccounts";
+
+import { getGames, getListings, type Game, type Listing } from "@/lib/api";
 import mobileLegendImage from "@/assets/images/mobilelegend.jpg";
 import pubgImage from "@/assets/images/pubj.jpg";
 
-type GameType = GameAccount["gameType"];
-type PriceSort = "default" | "low-to-high" | "high-to-low";
+import GameCard from "@/components/game/GameCard";
+
+type GameType = "mobile-legends" | "pubg";
+type PriceSort = "newest" | "price_asc" | "price_desc";
 
 const seeMoreData: Record<
   GameType,
@@ -28,6 +31,7 @@ const seeMoreData: Record<
     description: string;
     image: string;
     accent: string;
+    gameNames: string[];
   }
 > = {
   "mobile-legends": {
@@ -36,6 +40,7 @@ const seeMoreData: Record<
       "Browse ML accounts by skins, heroes, rank, and seller details.",
     image: mobileLegendImage,
     accent: "text-pink-400",
+    gameNames: ["mobile legends", "mobile legend", "mlbb"],
   },
   pubg: {
     title: "PUBG Accounts",
@@ -43,37 +48,60 @@ const seeMoreData: Record<
       "Browse PUBG accounts by tier, outfits, UC, weapons, and inventory.",
     image: pubgImage,
     accent: "text-emerald-400",
+    gameNames: ["pubg", "pubg mobile"],
   },
 };
 
 const isGameType = (value: string | undefined): value is GameType =>
   value === "mobile-legends" || value === "pubg";
 
-const smallScreenAccountsPerPage = 4;
-const largeScreenAccountsPerPage = 6;
+const findGame = (games: Game[], names: string[]) => {
+  const normalizedNames = names.map((name) => name.toLowerCase());
 
-const getAccountPrice = (price: string) => Number(price.replace(/,/g, ""));
-const formatPrice = (price: number) => price.toLocaleString("en-US");
+  return games.find((game) =>
+    normalizedNames.includes(game.name.toLowerCase()),
+  );
+};
+
+const smallScreenAccountsPerPage = 6;
+const largeScreenAccountsPerPage = 6;
 
 const SeeMorePage = () => {
   const { gameType } = useParams();
-  const [searchParams] = useSearchParams();
-  const activeGameType: GameType = isGameType(gameType)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const safeGameType: GameType = isGameType(gameType)
     ? gameType
     : "mobile-legends";
+  const page = seeMoreData[safeGameType];
+
+  const [games, setGames] = useState<Game[]>([]);
+  const [accounts, setAccounts] = useState<Listing[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const [accountsPerPage, setAccountsPerPage] = useState(
     smallScreenAccountsPerPage,
   );
-  const [priceSort, setPriceSort] = useState<PriceSort>("default");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const accounts = useMemo(
-    () =>
-      gamesAccounts.filter(
-        (account) => account.gameType === activeGameType,
-      ),
-    [activeGameType],
+
+  const search = searchParams.get("search") || "";
+  const sort = (searchParams.get("sort") || "newest") as PriceSort;
+  const minPrice = searchParams.get("min_price") || "";
+  const maxPrice = searchParams.get("max_price") || "";
+  const requestedPage = Number(searchParams.get("page") || "1");
+
+  const [searchInput, setSearchInput] = useState(search);
+  const [minPriceInput, setMinPriceInput] = useState(minPrice);
+  const [maxPriceInput, setMaxPriceInput] = useState(maxPrice);
+
+  const selectedGame = useMemo(
+    () => findGame(games, page.gameNames),
+    [games, page.gameNames],
   );
+
+  useEffect(() => {
+    setSearchInput(search);
+    setMinPriceInput(minPrice);
+    setMaxPriceInput(maxPrice);
+  }, [search, minPrice, maxPrice]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -93,72 +121,113 @@ const SeeMorePage = () => {
     };
   }, []);
 
-  const accountPrices = accounts.map((account) =>
-    getAccountPrice(account.price),
-  );
-  const lowestPrice = Math.min(...accountPrices);
-  const highestPrice = Math.max(...accountPrices);
-  const minPriceValue = minPrice === "" ? undefined : Number(minPrice);
-  const maxPriceValue = maxPrice === "" ? undefined : Number(maxPrice);
-  const filteredAccounts = useMemo(() => {
-    const nextAccounts = accounts.filter((account) => {
-      const price = getAccountPrice(account.price);
-      const matchesMin =
-        minPriceValue === undefined || Number.isNaN(minPriceValue)
-          ? true
-          : price >= minPriceValue;
-      const matchesMax =
-        maxPriceValue === undefined || Number.isNaN(maxPriceValue)
-          ? true
-          : price <= maxPriceValue;
+  useEffect(() => {
+    let isMounted = true;
 
-      return matchesMin && matchesMax;
-    });
+    const loadAccounts = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
 
-    if (priceSort === "low-to-high") {
-      return [...nextAccounts].sort(
-        (firstAccount, secondAccount) =>
-          getAccountPrice(firstAccount.price) - getAccountPrice(secondAccount.price),
-      );
-    }
+        const gamesData = await getGames();
 
-    if (priceSort === "high-to-low") {
-      return [...nextAccounts].sort(
-        (firstAccount, secondAccount) =>
-          getAccountPrice(secondAccount.price) - getAccountPrice(firstAccount.price),
-      );
-    }
+        if (!isMounted) {
+          return;
+        }
 
-    return nextAccounts;
-  }, [accounts, maxPriceValue, minPriceValue, priceSort]);
-  const hasActiveFilters =
-    priceSort !== "default" || minPrice !== "" || maxPrice !== "";
-  const requestedPage = Number(searchParams.get("page") || "1");
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredAccounts.length / accountsPerPage),
-  );
-  const currentPage = Number.isInteger(requestedPage)
-    ? Math.min(Math.max(requestedPage, 1), totalPages)
-    : 1;
-  const firstAccountIndex = (currentPage - 1) * accountsPerPage;
-  const paginatedAccounts = filteredAccounts.slice(
-    firstAccountIndex,
-    firstAccountIndex + accountsPerPage,
-  );
-  const getPageLink = (pageNumber: number) =>
-    `/see-more/${activeGameType}?page=${pageNumber}`;
-  const resetFilters = () => {
-    setPriceSort("default");
-    setMinPrice("");
-    setMaxPrice("");
-  };
+        setGames(gamesData);
+
+        const game = findGame(gamesData, page.gameNames);
+
+        if (!game) {
+          setAccounts([]);
+          return;
+        }
+
+        const listingsData = await getListings({
+          game_id: String(game.id),
+          search,
+          sort,
+          min_price: minPrice,
+          max_price: maxPrice,
+        });
+
+        if (!isMounted) {
+          return;
+        }
+
+        setAccounts(listingsData);
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+
+        setError("Unable to load accounts.");
+        setAccounts([]);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadAccounts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [page.gameNames, search, sort, minPrice, maxPrice]);
 
   if (!isGameType(gameType)) {
     return <Navigate to="/see-more/mobile-legends" replace />;
   }
 
-  const page = seeMoreData[activeGameType];
+  const totalPages = Math.max(1, Math.ceil(accounts.length / accountsPerPage));
+  const currentPage = Number.isInteger(requestedPage)
+    ? Math.min(Math.max(requestedPage, 1), totalPages)
+    : 1;
+  const firstAccountIndex = (currentPage - 1) * accountsPerPage;
+  const paginatedAccounts = accounts.slice(
+    firstAccountIndex,
+    firstAccountIndex + accountsPerPage,
+  );
+
+  const updateFilters = (next: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams);
+
+    Object.entries(next).forEach(([key, value]) => {
+      if (value.trim()) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+    });
+
+    params.set("page", "1");
+    setSearchParams(params);
+  };
+
+  const getPageLink = (pageNumber: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(pageNumber));
+
+    return `/see-more/${safeGameType}?${params.toString()}`;
+  };
+
+  const applyFilters = () => {
+    updateFilters({
+      search: searchInput,
+      min_price: minPriceInput,
+      max_price: maxPriceInput,
+    });
+  };
+
+  // const resetFilters = () => {
+  //   setSearchParams({ page: "1" });
+  // };
+
+  // const hasActiveFilters =
+  //   search !== "" || sort !== "newest" || minPrice !== "" || maxPrice !== "";
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
@@ -170,7 +239,7 @@ const SeeMorePage = () => {
         Back to home
       </Link>
 
-      <section className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900/50">
+      <section className="overflow-hidden rounded-lg border border-slate-800 bg-slate-900/50 hidden md:block">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr]">
           <div className="flex flex-col justify-center gap-5 p-6 sm:p-8 lg:p-10">
             <div className="flex items-center gap-3">
@@ -198,7 +267,7 @@ const SeeMorePage = () => {
               </span>
               <span className="inline-flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2">
                 <Gamepad2 className="h-4 w-4 text-purple-400" />
-                {accounts.length} accounts
+                {isLoading ? "Loading..." : `${accounts.length} accounts`}
               </span>
             </div>
           </div>
@@ -211,6 +280,21 @@ const SeeMorePage = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent lg:bg-gradient-to-r" />
           </div>
+        </div>
+      </section>
+
+      <section className="md:hidden">
+        <div>
+          <h1 className="text-2xl font-black tracking-wide text-white sm:text-4xl">
+            {page.title}
+          </h1>
+          <p className="mt-3 max-w-2xl text-xs leading-6 text-slate-400 sm:text-base">
+            {page.description}
+          </p>
+          <span className="inline-flex mt-5 items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2">
+            <Gamepad2 className="h-4 w-4 text-purple-400" />
+            {isLoading ? "Loading..." : `${accounts.length} accounts`}
+          </span>
         </div>
       </section>
 
@@ -245,7 +329,8 @@ const SeeMorePage = () => {
               Filters
             </div>
             <p className="mt-1 text-sm text-slate-500">
-              Showing {filteredAccounts.length} of {accounts.length} accounts
+              Showing {accounts.length} account
+              {accounts.length === 1 ? "" : "s"}
             </p>
           </div>
 
@@ -255,15 +340,15 @@ const SeeMorePage = () => {
               <div className="relative mt-2">
                 <ArrowUpDown className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                 <select
-                  value={priceSort}
+                  value={sort}
                   onChange={(event) =>
-                    setPriceSort(event.target.value as PriceSort)
+                    updateFilters({ sort: event.target.value })
                   }
                   className="h-11 w-full appearance-none rounded-lg border border-slate-700 bg-slate-950 px-10 text-sm font-semibold text-white outline-none transition-colors focus:border-pink-500"
                 >
-                  <option value="default">Default</option>
-                  <option value="low-to-high">Low to high</option>
-                  <option value="high-to-low">High to low</option>
+                  <option value="newest">Default</option>
+                  <option value="price_asc">Low to high</option>
+                  <option value="price_desc">High to low</option>
                 </select>
                 <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" />
               </div>
@@ -275,9 +360,9 @@ const SeeMorePage = () => {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                placeholder={formatPrice(lowestPrice)}
-                value={minPrice}
-                onChange={(event) => setMinPrice(event.target.value)}
+                // placeholder={formatPrice(lowestPrice)}
+                value={minPriceInput}
+                onChange={(event) => setMinPriceInput(event.target.value)}
                 className="h-11 mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm font-semibold text-white outline-none transition-colors placeholder:text-slate-600 focus:border-pink-500"
               />
             </label>
@@ -288,90 +373,41 @@ const SeeMorePage = () => {
                 type="number"
                 inputMode="numeric"
                 min={0}
-                placeholder={formatPrice(highestPrice)}
-                value={maxPrice}
-                onChange={(event) => setMaxPrice(event.target.value)}
+                //placeholder={formatPrice(highestPrice)}
+                value={maxPriceInput}
+                onChange={(event) => setMaxPriceInput(event.target.value)}
                 className="h-11 mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm font-semibold text-white outline-none transition-colors placeholder:text-slate-600 focus:border-pink-500"
               />
             </label>
 
             <button
               type="button"
-              onClick={resetFilters}
-              disabled={!hasActiveFilters}
-              className="mt-auto inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-950 px-4 text-sm font-bold text-slate-300 transition-colors hover:text-white disabled:cursor-not-allowed disabled:border-slate-800 disabled:text-slate-600"
+              onClick={applyFilters}
+              className="mt-auto inline-flex h-11 items-center justify-center rounded-lg bg-pink-500 px-4 text-sm font-bold text-white transition-colors hover:bg-pink-600"
             >
-              <X className="h-4 w-4" />
-              Reset
+              Apply
             </button>
           </div>
         </div>
       </section>
 
-      {paginatedAccounts.length > 0 ? (
-        <section className="grid gap-1.5  md:gap-5 grid-cols-2 lg:grid-cols-3">
+      {error && <p className="text-sm font-semibold text-red-400">{error}</p>}
+
+      {isLoading ? (
+        <p className="text-sm text-slate-400">Loading accounts...</p>
+      ) : paginatedAccounts.length > 0 ? (
+        <section className="grid grid-cols-2 gap-1.5 md:gap-5       lg:grid-cols-3">
           {paginatedAccounts.map((account) => (
-            <Link
-              key={account.id}
-              to={`/accounts/${account.id}`}
-              // className="block w-full min-w-0 overflow-hidden rounded-lg shadow-md hover:bg-slate-900/80 border border-slate-800/80 hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]  transition-all duration-300"
-              className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-lg border border-slate-800/80 shadow-md transition-all duration-300 hover:border-purple-500/40 hover:bg-slate-900/80 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]"
-            >
-              <div className="relative shrink-0 group">
-                <img
-                  src={account.image}
-                  alt="Game Cover"
-                  // className="w-full h-40 sm:h-60 xs:h-35 object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
-                  className="h-40 sm:h-60 xs:h-35 w-full cursor-pointer object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                {/* <p className="text-sm text-green-500 rounded-sm py-0.5 px-1 bg-green-600/20 mt-1 flex items-center gap-1 absolute top-2 right-2"> */}
-                <p className="absolute right-2 top-2 flex items-center gap-1 rounded-sm bg-green-600/20 px-1 py-0.5 text-sm text-green-500">
-                  <CircleCheckBig className="w-4 h-4" /> For rental
-                </p>
-              </div>
-
-              <div className="flex flex-1 flex-col p-4">
-                {/* <div className="flex items-center justify-between gap-2 border-b border-b-mauve-500 pb-2"> */}
-                <div className="flex items-start justify-between gap-2 border-b border-b-mauve-500 pb-2">
-                  <h3 className="sm:text-lg xs:text-[10px] line-clamp-2 min-w-0 flex-1 font-bold leading-snug text-white">
-                    {account.name}
-                  </h3>
-                  <p className="sm:text-sm xs:text-[10px] shrink-0 text-gray-400">
-                    {account.date}
-                  </p>
-                </div>
-
-                <div className=" mt-auto flex items-center justify-between gap-3 pt-4 md:gap-10  sm:gap-5 xs:gap-3">
-                  <div className=" flex min-w-0 items-center gap-1 sm:gap-3">
-                    <img
-                      src={denoeProfileImage}
-                      alt="Denoe profile"
-                      className="sm:h-12 sm:w-12 xs:h-8 xs:w-8 shrink-0 rounded-full border border-slate-700 object-cover"
-                    />
-                    <div className="min-w-0">
-                      <p className="truncate sm:text-base xs:text-[9px] text-sm font-bold text-white">
-                        Denoe
-                      </p>
-                      <p className="truncate sm:text-sm xs:text-[9px]  text-sm font-medium text-slate-400">
-                        Verified Seller
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <p className="sm:text-[15px] xs:text-[8px] shrink-0 text-base font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400">
-                      MMK {account.price}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Link>
+            <GameCard key={account.id} account={account} />
           ))}
         </section>
       ) : (
         <section className="rounded-lg border border-slate-800 bg-slate-900/50 p-8 text-center">
           <p className="text-lg font-black text-white">No accounts found</p>
           <p className="mt-2 text-sm text-slate-400">
-            Try a different price range or reset the filters.
+            {selectedGame
+              ? "Try a different search or price range."
+              : "No backend game matched this page."}
           </p>
         </section>
       )}

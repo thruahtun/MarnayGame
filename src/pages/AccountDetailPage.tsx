@@ -12,48 +12,149 @@ import {
   ShieldCheck,
   UserRound,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useParams } from "react-router";
 
-import denoeProfileImage from "@/assets/images/denoe-profile.jpg";
-import { gamesAccounts } from "@/lib/gamesAccounts";
+import { getListing, getListingImageUrl, type ListingDetails } from "@/lib/api";
 
-const gameTypeLabels = {
-  "mobile-legends": "Mobile Legends",
-  pubg: "PUBG",
+const DEFAULT_TELEGRAM = "MarnayGameStore";
+const DEFAULT_MESSENGER = "MarnayGameStore";
+const DEFAULT_VIBER = "+959251355782";
+
+const getGameType = (gameName?: string | null) => {
+  const normalizedGameName = gameName?.toLowerCase() ?? "";
+
+  return normalizedGameName.includes("pubg") ? "pubg" : "mobile-legends";
+};
+
+const getGameLabel = (gameName?: string | null) => {
+  if (!gameName) {
+    return "Mobile Legends";
+  }
+
+  return gameName.toLowerCase().includes("pubg") ? "PUBG" : gameName;
+};
+
+const formatDate = (date?: string | null) => {
+  if (!date) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-GB").format(new Date(date));
+};
+
+const formatSaleType = (saleType?: string | null) => {
+  if (!saleType) {
+    return "For sale";
+  }
+
+  return saleType.toLowerCase() === "rental" ? "For rental" : "For sale";
+};
+
+const isString = (value: string | null): value is string => Boolean(value);
+
+const buildTelegramUrl = (telegram?: string | null) => {
+  // 1. Clean up the input string by trimming spaces
+  const cleanedInput = telegram?.trim();
+
+  // 2. If it's empty, use the default. Otherwise, use the input.
+  const target = cleanedInput || DEFAULT_TELEGRAM;
+
+  // 3. If the database mistakenly stored a full URL, strip it down to just the username
+  const username = target.replace(/^https?:\/\/t\.me\//i, "").replace(/^@/, "");
+
+  return `https://t.me/${username}`;
+};
+
+const buildMessengerUrl = (messenger?: string | null) => {
+  const page = messenger || DEFAULT_MESSENGER;
+
+  return /^https?:\/\//i.test(page) ? page : `https://m.me/${page}`;
+};
+
+const buildViberUrl = (phone?: string | null) => {
+  const number = phone || DEFAULT_VIBER;
+
+  return `viber://chat?number=${encodeURIComponent(number)}`;
 };
 
 const AccountDetailPage = () => {
   const { accountId } = useParams();
+  const [account, setAccount] = useState<ListingDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageDirection, setImageDirection] = useState<"next" | "previous">(
     "next",
   );
-  const account = gamesAccounts.find(
-    (item) => item.id === Number(accountId),
-  );
-  const detailAccount = account ?? gamesAccounts[0];
 
-  const gameLabel = gameTypeLabels[detailAccount.gameType];
+  useEffect(() => {
+    if (!accountId) {
+      setIsLoading(false);
+      setError("Unable to load account.");
+      return;
+    }
+
+    let isMounted = true;
+
+    const loadAccount = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        const listing = await getListing(accountId);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setAccount(listing);
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+
+        setAccount(null);
+        setError("Unable to load account.");
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadAccount();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [accountId]);
+
+  const gameType = getGameType(account?.game);
+  const gameLabel = getGameLabel(account?.game);
+
   const relatedImages = useMemo(() => {
-    const images = detailAccount.galleryImages?.length
-      ? detailAccount.galleryImages
-      : [
-          detailAccount.image,
-          ...gamesAccounts
-            .filter((item) => item.gameType === detailAccount.gameType)
-            .map((item) => item.image),
-        ];
+    if (!account) {
+      return [];
+    }
 
-    return Array.from(new Set(images));
-  }, [detailAccount]);
-  const selectedImage = relatedImages[selectedImageIndex] || detailAccount.image;
-  const hasMultipleImages = relatedImages.length > 1;
+    const mainImage = getListingImageUrl(account);
+    const galleryImages = account.images
+      .map((image) => image.image_url)
+      .filter(isString);
+
+    return Array.from(new Set([mainImage, ...galleryImages].filter(isString)));
+  }, [account]);
+
+
   const hasScrollableThumbnails = relatedImages.length > 3;
+  const seller = account?.seller;
+  const selectedImage = relatedImages[selectedImageIndex];
+  const hasMultipleImages = relatedImages.length > 1;
 
-  // useEffect(() => {
-  //   setSelectedImageIndex(0);
-  // }, [detailAccount.id]);
+  useEffect(() => {
+    setSelectedImageIndex(0);
+  }, [account?.id]);
 
   const showPreviousImage = () => {
     setImageDirection("previous");
@@ -78,14 +179,39 @@ const AccountDetailPage = () => {
     setSelectedImageIndex(imageIndex);
   };
 
-  if (!account) {
+  if (!accountId) {
     return <Navigate to="/see-more/mobile-legends" replace />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <p className="text-sm font-medium text-slate-400">Loading account...</p>
+      </div>
+    );
+  }
+
+  if (error || !account) {
+    return (
+      <div className="mx-auto w-full max-w-6xl space-y-4 px-4 py-8 sm:px-6 lg:px-8">
+        <Link
+          to="/see-more/mobile-legends"
+          className="inline-flex items-center gap-2 text-sm font-bold text-slate-400 transition-colors hover:text-white"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to accounts
+        </Link>
+        <p className="text-sm font-semibold text-red-400">
+          {error || "Account not found."}
+        </p>
+      </div>
+    );
   }
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
       <Link
-        to={`/see-more/${account.gameType}`}
+        to={`/see-more/${gameType}`}
         className="inline-flex items-center gap-2 text-sm font-bold text-slate-400 transition-colors hover:text-white"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -99,7 +225,7 @@ const AccountDetailPage = () => {
               <img
                 key={selectedImage}
                 src={selectedImage}
-                alt={account.name}
+                alt={account.title}
                 className={`account-carousel-image account-carousel-image-${imageDirection} absolute inset-0 h-full w-full object-contain`}
               />
               <span className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-2 py-1.5 text-xs font-bold text-emerald-300 sm:right-3 sm:top-3 sm:gap-2 sm:px-3 sm:py-2 sm:text-sm">
@@ -157,7 +283,7 @@ const AccountDetailPage = () => {
                 >
                   <img
                     src={image}
-                    alt={`${account.name} related screenshot ${index + 1}`}
+                    alt={`${account.title} related screenshot ${index + 1}`}
                     className="h-full w-full object-cover"
                   />
                 </button>
@@ -174,13 +300,13 @@ const AccountDetailPage = () => {
             </span>
             <span className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2">
               <CalendarDays className="h-4 w-4" />
-              {account.date}
+              {formatDate(account.created_at)}
             </span>
           </div>
 
           <div className="mt-6 space-y-2">
             <h1 className="break-words text-xl font-black tracking-wide text-white sm:text-2xl">
-              {account.name}
+              {account.title}
             </h1>
             <p className="text-xs leading-7 text-slate-400 sm:text-sm">
               {account.description}
@@ -210,15 +336,20 @@ const AccountDetailPage = () => {
 
           <div className="mt-8 rounded-lg border border-slate-800 bg-slate-950/50 p-4">
             <div className="flex items-center gap-3">
-              <img
-                src={denoeProfileImage}
-                alt="Denoe profile"
-                className="h-14 w-14 shrink-0 rounded-full border border-slate-700 object-cover"
-              />
+              {seller?.profile_image_url ? (
+                <img
+                  src={seller.profile_image_url}
+                  alt={`${seller.username} profile`}
+                  className="h-14 w-14 shrink-0 rounded-full border border-slate-700 object-cover"
+                />
+              ) : (
+                <div className="h-14 w-14 shrink-0 rounded-full border border-slate-700 bg-slate-800" />
+              )}
+
               <div className="min-w-0">
                 <p className="flex items-center gap-2 text-lg font-black text-white">
                   <UserRound className="h-4 w-4 text-slate-400" />
-                  Denoe
+                  {seller?.username ?? "Seller"}
                 </p>
                 <p className="text-sm font-medium text-slate-400">
                   Verified Seller
@@ -229,7 +360,7 @@ const AccountDetailPage = () => {
 
           <div className="grid grid-cols-2 gap-3 mt-4">
             <a
-              href="https://t.me/MarnayGameStore"
+              href={buildTelegramUrl(seller?.telegram)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-500 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-sky-600"
@@ -238,7 +369,7 @@ const AccountDetailPage = () => {
               Telegram
             </a>
             <a
-              href="https://m.me/MarnayGameStore"
+              href={buildMessengerUrl(seller?.messenger)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700"
@@ -247,7 +378,7 @@ const AccountDetailPage = () => {
               Messenger
             </a>
             <a
-              href="viber://chat?number=+959251355782"
+              href={buildViberUrl(seller?.viber || seller?.phone)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex col-span-2 items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-bold text-white hover:bg-purple-700 transition-colors"
