@@ -230,7 +230,7 @@ const AccountDetailPage = () => {
               />
               <span className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-2 py-1.5 text-xs font-bold text-emerald-300 sm:right-3 sm:top-3 sm:gap-2 sm:px-3 sm:py-2 sm:text-sm">
                 <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                For rental
+                {formatSaleType(account.sale_type)}
               </span>
               {hasMultipleImages && (
                 <>
