@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useStore } from "@/context/StoreContext";
 import { Gamepad2, Moon, Search, ShoppingCart, Sun, ChevronRight } from "lucide-react";
-import { gamesAccounts } from "@/lib/gamesAccounts";
+import { getListings, getListingImageUrl, type Listing } from "@/lib/api";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -42,31 +42,53 @@ const Header: React.FC = () => {
     };
   }, []);
 
-  // Filter suggestion results - only match game accounts
-  const suggestions = useMemo(() => {
-    const q = searchQuery.toLowerCase().trim();
-    if (!q) return { accounts: [], count: 0 };
+  // Fetch live suggestion results from the API
+  const [suggestions, setSuggestions] = useState<{ accounts: Listing[]; count: number }>({ accounts: [], count: 0 });
 
-    const matchingAccounts = gamesAccounts
-      .filter(
-        (acc) =>
-          acc.name.toLowerCase().includes(q) ||
-          acc.gameType.toLowerCase().replace("-", " ").includes(q)
-      )
-      .slice(0, 4); // Show up to 4 account suggestions
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q) {
+      setSuggestions({ accounts: [], count: 0 });
+      return;
+    }
 
-    return {
-      accounts: matchingAccounts,
-      count: matchingAccounts.length,
-    };
+    // Debounce API call by 250ms
+    const timer = setTimeout(async () => {
+      try {
+        const results = await getListings({ search: q });
+        const lowerQ = q.toLowerCase();
+        
+        // We still apply a local filter just in case the backend search is too broad,
+        // but passing { search: q } ensures the backend searches the entire database.
+        const filtered = results.filter((acc) => {
+          const titleMatch = acc.title?.toLowerCase().includes(lowerQ) || false;
+          const priceMatch = String(acc.price || "").toLowerCase().includes(lowerQ);
+          const descMatch = acc.description?.toLowerCase().includes(lowerQ) || false;
+          return titleMatch || priceMatch || descMatch;
+        });
+
+        // If the backend search matches something but our strict filter misses it (e.g. fuzzy search),
+        // we might want to just use results. But let's trust the backend first.
+        const displayResults = filtered.length > 0 ? filtered : results;
+
+        const top = displayResults.slice(0, 4);
+        setSuggestions({ accounts: top, count: displayResults.length });
+      } catch {
+        setSuggestions({ accounts: [], count: 0 });
+      }
+    }, 250);
+
+    return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Navigate to dedicated search page
+  // Navigate to dedicated see-more page (acting as search results)
   const handleSearchSubmit = (queryStr: string) => {
     if (!queryStr.trim()) return;
-    navigate(`/search?q=${encodeURIComponent(queryStr)}`);
+    navigate(`/see-more/mobile-legends?search=${encodeURIComponent(queryStr)}`);
     setShowDesktopDropdown(false);
     setShowMobileDropdown(false);
+    // Clear the header input after navigation
+    setSearchQuery("");
 
     // Blur inputs
     if (document.activeElement instanceof HTMLElement) {
@@ -101,31 +123,40 @@ const Header: React.FC = () => {
                 Accounts Marketplace
               </span>
               <div className="space-y-1">
-                {suggestions.accounts.map((acc) => (
-                  <Link
-                    key={acc.id}
-                    to={`/accounts/${acc.id}`}
-                    onClick={onClose}
-                    className="w-full flex items-center gap-3 p-1.5 hover:bg-slate-900/60 rounded-xl transition-colors text-left group cursor-pointer"
-                  >
-                    <img
-                      src={acc.image}
-                      alt={acc.name}
-                      className="w-8 h-8 object-cover rounded-lg bg-slate-900 shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <span className="text-xs font-bold text-slate-200 group-hover:text-pink-400 transition-colors truncate block">
-                        {acc.name}
+                {suggestions.accounts.map((acc) => {
+                  const imgUrl = getListingImageUrl(acc);
+                  return (
+                    <Link
+                      key={acc.id}
+                      to={`/accounts/${acc.id}`}
+                      onClick={onClose}
+                      className="w-full flex items-center gap-3 p-1.5 hover:bg-slate-900/60 rounded-xl transition-colors text-left group cursor-pointer"
+                    >
+                      {imgUrl ? (
+                        <img
+                          src={imgUrl}
+                          alt={acc.title}
+                          className="w-8 h-8 object-cover rounded-lg bg-slate-900 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-lg bg-slate-900 shrink-0 flex items-center justify-center text-slate-600 text-xs font-bold">
+                          {acc.title?.[0]?.toUpperCase() ?? "?"}
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs font-bold text-slate-200 group-hover:text-pink-400 transition-colors truncate block">
+                          {acc.title}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block truncate">
+                          {acc.description ? acc.description : (acc.game ?? "Account")}
+                        </span>
+                      </div>
+                      <span className="text-xs font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 shrink-0">
+                        MMK {acc.price}
                       </span>
-                      <span className="text-[10px] text-slate-500 block">
-                        {acc.gameType === "mobile-legends" ? "Mobile Legends" : "PUBG"} Account
-                      </span>
-                    </div>
-                    <span className="text-xs font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 shrink-0">
-                      MMK {acc.price}
-                    </span>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 

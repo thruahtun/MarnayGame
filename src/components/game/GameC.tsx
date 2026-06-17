@@ -60,8 +60,8 @@ const GameC = ({ account }: { account: Listing }) => {
             <div className="flex min-w-0 items-center gap-3">
               {seller?.profile_image_url ? (
                 <img
-                  src={denoeProfileImage}
-                  alt="Denoe profile"
+                  src={seller.profile_image_url}
+                  alt={`${seller.username} profile`}
                   className="h-12 w-12 shrink-0 rounded-full border border-slate-700 object-cover"
                 />
               ) : (

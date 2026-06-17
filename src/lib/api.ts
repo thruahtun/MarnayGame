@@ -2,7 +2,7 @@ export interface Listing {
   id: number;
   title: string;
   description: string;
-  price: string;
+  price: number;
   rank?: string | null;
   server?: string | null;
   image?: string | null;
@@ -60,6 +60,17 @@ export interface HomeData {
   pubg_listings: Listing[];
 }
 
+
+export interface ListingsResponse {
+  items: Listing[];
+  page: number;
+  pages: number;
+  total: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
+
+
 export type ListingParams = {
   search?: string;
   game_id?: string;
@@ -95,8 +106,12 @@ const buildApiUrl = (path: string, params?: Record<string, string>) => {
 // };
 
 export const getListings = async (
-  params: ListingParams = {}
-): Promise<Listing[]> => {
+  params?: Record<string, string>
+): Promise<ListingsResponse> => {
+
+// export const getListings = async (
+//   params: ListingParams = {}
+// ): Promise<Listing[]> => {
   const response = await fetch(buildApiUrl("/api/listings", params));
 
   if (!response.ok) {
