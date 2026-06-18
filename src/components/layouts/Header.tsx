@@ -184,13 +184,19 @@ const Header: React.FC = () => {
             <div className="p-2 rounded-xl bg-purple-600/10 group-hover:border-purple-500/40 transition-colors">
               <Gamepad2 className="w-6 h-6 text-purple-400 group-hover:text-purple-300 transition-colors" />
             </div>
-            <span className="font-black text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400">
-              MARNAY
-            </span>
+            <p className="font-black ml-3   text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400">
+              Deno & Marnay
+              <span className="block text-gray-300 text-lg font-medium text-center relative">
+                {" "}
+                <span className="border-1 border-gray-300 absolute top-3 left-1 w-5"></span>{" "}
+                Game Store
+                <span className="border-1 border-gray-300 absolute top-3.5 w-5"></span>
+              </span>
+            </p>
           </Link>
 
-          <div className="sm:hidden flex items-center gap-2 shrink-0">
-            {/* Theme Toggler */}
+          {/* <div className="sm:hidden flex items-center gap-2 shrink-0">
+            
             <button
               type="button"
               onClick={(event) => {
@@ -208,7 +214,7 @@ const Header: React.FC = () => {
               )}
             </button>
 
-            {/* Cart Icon */}
+            
             <button
               type="button"
               onClick={() => setCartOpen(true)}
@@ -223,11 +229,14 @@ const Header: React.FC = () => {
                 </span>
               )}
             </button>
-          </div>
+          </div> */}
 
           <div className="hidden sm:flex items-center justify-between gap-6 min-w-md">
             {/* Search Bar with Suggestion Overlay */}
-            <div ref={desktopSearchRef} className="flex-1 min-w-sm hidden sm:block relative">
+            <div
+              ref={desktopSearchRef}
+              className="flex-1 min-w-sm hidden sm:block relative"
+            >
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <input
                 type="text"
@@ -249,7 +258,9 @@ const Header: React.FC = () => {
                 }}
                 className="w-full bg-slate-900/60 dark:bg-zinc-900/60 border border-slate-800 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 transition-all"
               />
-              {renderDropdown(showDesktopDropdown, () => setShowDesktopDropdown(false))}
+              {renderDropdown(showDesktopDropdown, () =>
+                setShowDesktopDropdown(false),
+              )}
             </div>
 
             {/* Signin or Signup Button */}
@@ -265,7 +276,10 @@ const Header: React.FC = () => {
         </div>
 
         {/* Mobile Search Bar */}
-        <div ref={mobileSearchRef} className="px-4 pb-3 sm:hidden block relative">
+        <div
+          ref={mobileSearchRef}
+          className="px-4 pb-3 sm:hidden block relative"
+        >
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input
@@ -285,7 +299,9 @@ const Header: React.FC = () => {
               className="w-full bg-slate-900/60 border border-slate-800 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 transition-all"
             />
           </div>
-          {renderDropdown(showMobileDropdown, () => setShowMobileDropdown(false))}
+          {renderDropdown(showMobileDropdown, () =>
+            setShowMobileDropdown(false),
+          )}
         </div>
       </header>
     </>
