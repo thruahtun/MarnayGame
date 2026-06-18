@@ -60,7 +60,7 @@ const Header: React.FC = () => {
         
         // We still apply a local filter just in case the backend search is too broad,
         // but passing { search: q } ensures the backend searches the entire database.
-        const filtered = results.filter((acc) => {
+        const filtered = results.items.filter((acc) => {
           const titleMatch = acc.title?.toLowerCase().includes(lowerQ) || false;
           const priceMatch = String(acc.price || "").toLowerCase().includes(lowerQ);
           const descMatch = acc.description?.toLowerCase().includes(lowerQ) || false;
@@ -69,7 +69,7 @@ const Header: React.FC = () => {
 
         // If the backend search matches something but our strict filter misses it (e.g. fuzzy search),
         // we might want to just use results. But let's trust the backend first.
-        const displayResults = filtered.length > 0 ? filtered : results;
+        const displayResults = filtered.length > 0 ? filtered : results.items;
 
         const top = displayResults.slice(0, 4);
         setSuggestions({ accounts: top, count: displayResults.length });

@@ -1,7 +1,6 @@
 
 import { CircleCheckBig } from "lucide-react";
 import { Link } from "react-router";
-import denoeProfileImage from "@/assets/images/denoe-profile.jpg";
 import type { Listing } from "@/lib/api";
 import { getListingImageUrl } from "@/lib/api";
 

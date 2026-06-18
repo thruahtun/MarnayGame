@@ -73,21 +73,23 @@ export interface ListingsResponse {
 
 export type ListingParams = {
   search?: string;
-  game_id?: string;
+  game_id?: string | number;
   sort?: string;
-  min_price?: string;
-  max_price?: string;
+  min_price?: string | number;
+  max_price?: string | number;
+  page?: string | number;
+  per_page?: string | number;
 };
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
-const buildApiUrl = (path: string, params?: Record<string, string>) => {
+const buildApiUrl = (path: string, params?: Record<string, any>) => {
   const url = new URL(`${API_BASE_URL}${path}`, window.location.origin);
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
-      if (value.trim()) {
-        url.searchParams.set(key, value);
+      if (value !== undefined && value !== null && String(value).trim() !== "") {
+        url.searchParams.set(key, String(value).trim());
       }
     });
   }
@@ -106,12 +108,8 @@ const buildApiUrl = (path: string, params?: Record<string, string>) => {
 // };
 
 export const getListings = async (
-  params?: Record<string, string>
+  params?: ListingParams
 ): Promise<ListingsResponse> => {
-
-// export const getListings = async (
-//   params: ListingParams = {}
-// ): Promise<Listing[]> => {
   const response = await fetch(buildApiUrl("/api/listings", params));
 
   if (!response.ok) {
