@@ -231,11 +231,11 @@ const Header: React.FC = () => {
             </button>
           </div> */}
 
-          <div className="hidden sm:flex items-center justify-between gap-6 min-w-md">
+          <div className=" sm:flex items-center justify-between gap-6 lg:min-w-md">
             {/* Search Bar with Suggestion Overlay */}
             <div
               ref={desktopSearchRef}
-              className="flex-1 min-w-sm hidden sm:block relative"
+              className="flex-1 min-w-sm hidden lg:block relative"
             >
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <input
@@ -264,7 +264,7 @@ const Header: React.FC = () => {
             </div>
 
             {/* Signin or Signup Button */}
-            <div className="flex-1 min-w-25 hidden sm:block relative">
+            <div className="flex-1 lg:min-w-25 w-20 block relative">
               <Link
                 to="/signup"
                 className="px-3 w-full text-center py-2 text-white bg-pink-500 rounded-lg text-md font-medium absolute right-4 top-1/2 -translate-y-1/2"
@@ -278,7 +278,7 @@ const Header: React.FC = () => {
         {/* Mobile Search Bar */}
         <div
           ref={mobileSearchRef}
-          className="px-4 pb-3 sm:hidden block relative"
+          className="px-4 pb-3 lg:hidden block relative"
         >
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />

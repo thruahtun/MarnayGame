@@ -112,13 +112,13 @@ const App: React.FC = () => {
                   className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-pink-600 px-5 py-3 font-bold text-white shadow-lg shadow-pink-950/30 transition-colors hover:bg-pink-500 sm:justify-start"
                 >
                   <BadgeDollarSign className="h-5 w-5" />
-                  <span>Sell Your Account</span>
+                  <span>Accounts ရောင်းရန်</span>
                 </Button>
                 <Button
                   onClick={() => scrollToSection("mobile-legends")}
                   className="cursor-pointer rounded-lg border border-white/15 bg-white/10 px-5 py-3 font-bold text-white transition-colors hover:bg-white/15"
                 >
-                  Browse Accounts
+                  Accounts ဝယ်ရန်
                 </Button>
               </div>
             </div>
