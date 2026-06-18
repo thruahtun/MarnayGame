@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useStore } from "@/context/StoreContext";
-import { Gamepad2, Moon, Search, ShoppingCart, Sun, ChevronRight } from "lucide-react";
+import { Gamepad2,  Search,  ChevronRight } from "lucide-react";
 import { getListings, getListingImageUrl, type Listing } from "@/lib/api";
 
 const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { theme, toggleTheme, cart, setCartOpen, searchQuery, setSearchQuery } =
+  const { searchQuery, setSearchQuery } =
     useStore();
 
   const isStorePage = location.pathname === "/";
