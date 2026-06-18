@@ -1,23 +1,17 @@
 import { createBrowserRouter } from "react-router";
-import App from "./pages/App";
 import RootLayout from "./layouts/RootLayout";
-import CheckoutPage from "./pages/CheckoutPage";
-import SellAccountPage from "./pages/SellAccountPage";
-import SeeMorePage from "./pages/SeeMorePage";
-import AccountDetailPage from "./pages/AccountDetailPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: RootLayout,
     children: [
-      { index: true, Component: App },
-      { path: "checkout", Component: CheckoutPage },
-      { path: "sell/:gameType", Component: SellAccountPage },
-      { path: "see-more/:gameType", Component: SeeMorePage },
-       { path: "accounts/:accountId", Component: AccountDetailPage },
-      { path: "SeeMore", Component: SeeMorePage },
+      { index: true, lazy: () => import("./pages/App").then(m => ({ Component: m.default })) },
+      { path: "checkout", lazy: () => import("./pages/CheckoutPage").then(m => ({ Component: m.default })) },
+      { path: "sell/:gameType", lazy: () => import("./pages/SellAccountPage").then(m => ({ Component: m.default })) },
+      { path: "see-more/:gameType", lazy: () => import("./pages/SeeMorePage").then(m => ({ Component: m.default })) },
+      { path: "accounts/:accountId", lazy: () => import("./pages/AccountDetailPage").then(m => ({ Component: m.default })) },
+      { path: "SeeMore", lazy: () => import("./pages/SeeMorePage").then(m => ({ Component: m.default })) },
     ],
   },
 ]);
-

@@ -97,56 +97,51 @@ const buildApiUrl = (path: string, params?: Record<string, any>) => {
   return url.toString();
 };
 
-// export const getListings = async (search = ""): Promise<Listing[]> => {
-//   const response = await fetch(buildApiUrl("/api/listings", { search }));
+const cache = new Map<string, { data: any; expiry: number }>();
+const inFlightRequests = new Map<string, Promise<any>>();
+const CACHE_DURATION = 60 * 1000; // 1 minute
 
-//   if (!response.ok) {
-//     throw new Error(`Unable to load listings (${response.status})`);
-//   }
+const fetchWithCache = async <T>(url: string): Promise<T> => {
+  const cached = cache.get(url);
+  if (cached && cached.expiry > Date.now()) {
+    return cached.data;
+  }
 
-//   return response.json();
-// };
+  if (inFlightRequests.has(url)) {
+    return inFlightRequests.get(url);
+  }
+
+  const request = fetch(url).then(async (response) => {
+    if (!response.ok) {
+      throw new Error(`Unable to load data (${response.status})`);
+    }
+    const data = await response.json();
+    cache.set(url, { data, expiry: Date.now() + CACHE_DURATION });
+    return data;
+  }).finally(() => {
+    inFlightRequests.delete(url);
+  });
+
+  inFlightRequests.set(url, request);
+  return request;
+};
 
 export const getListings = async (
   params?: ListingParams
 ): Promise<ListingsResponse> => {
-  const response = await fetch(buildApiUrl("/api/listings", params));
-
-  if (!response.ok) {
-    throw new Error(`Unable to load listings (${response.status})`);
-  }
-
-  return response.json();
+  return fetchWithCache<ListingsResponse>(buildApiUrl("/api/listings", params));
 };
 
 export const getListing = async (id: number | string): Promise<ListingDetails> => {
-  const response = await fetch(buildApiUrl(`/api/listings/${id}`));
-
-  if (!response.ok) {
-    throw new Error(`Unable to load listing (${response.status})`);
-  }
-
-  return response.json();
+  return fetchWithCache<ListingDetails>(buildApiUrl(`/api/listings/${id}`));
 };
 
 export const getGames = async (): Promise<Game[]> => {
-  const response = await fetch(buildApiUrl("/api/games"));
-
-  if (!response.ok) {
-    throw new Error(`Unable to load games (${response.status})`);
-  }
-
-  return response.json();
+  return fetchWithCache<Game[]>(buildApiUrl("/api/games"));
 };
 
 export const getHomeData = async (search = ""): Promise<HomeData> => {
-  const response = await fetch(buildApiUrl("/api/home", { search }));
-
-  if (!response.ok) {
-    throw new Error(`Unable to load home data (${response.status})`);
-  }
-
-  return response.json();
+  return fetchWithCache<HomeData>(buildApiUrl("/api/home", { search }));
 };
 
 export const getImageUrl = (image?: string | null) => {

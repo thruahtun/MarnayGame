@@ -1,6 +1,6 @@
 import a from "@/assets/images/1.jpg";
 import b from "@/assets/images/2.jpg";
-import c from "@/assets/images/account-gallery-collector.png";
+import c from "@/assets/images/account-gallery-collector.jpg";
 import d from "@/assets/images/4.jpg";
 import e from "@/assets/images/5.jpg";
 import f from "@/assets/images/6.jpg";
