@@ -1,13 +1,19 @@
 import type { Game } from "@/lib/api";
 
+interface PopularGameCardProps {
+  games: Game[];
+  onSelectGame: (gameName: string) => void;
+}
 
 
-const PopularGameCard = ({ games }: { games: Game[] }) => {
+
+const PopularGameCard = ({ games, onSelectGame }: PopularGameCardProps) => {
   return (
     <>
       {games.map((game) => (
         <div
           key={game.id}
+          onClick={() => onSelectGame(game.name)}
           className="relative overflow-hidden rounded-lg border border-slate-800/80 shadow-md transition-all duration-300 hover:border-purple-500/40 hover:bg-slate-900/80 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]"
         >
           {game.image_url ? (

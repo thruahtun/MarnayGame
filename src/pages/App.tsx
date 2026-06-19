@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // import { useStore } from "@/context/StoreContext";
 // import type { Game } from "@/lib/gamesData";
 
@@ -84,6 +84,23 @@ const App: React.FC = () => {
   const mobileLegendsListings = homeData?.mobile_legends_listings ?? [];
   const pubgListings = homeData?.pubg_listings ?? [];
 
+  const mlRef = useRef<HTMLDivElement | null>(null);
+  const pubgRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToGame = (gameName: string) => {
+    if (gameName === "mobile-legends") {
+      mlRef.current?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+
+    if (gameName === "pubg") {
+      pubgRef.current?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
+
   
 
   return (
@@ -166,13 +183,13 @@ const App: React.FC = () => {
             {homeError ? (
               <p className="text-sm text-rose-400">{homeError}</p>
             ) : (
-              <PopularGameCard games={games} />
+              <PopularGameCard games={games} onSelectGame={scrollToGame} />
             )}
           </div>
         </div>
 
         {/* ML Account Show */}
-        <div className="sm:mt-25 mt-5" id="mobile-legends">
+        <div className="sm:mt-25 mt-5" ref={mlRef} id="mobile-legends">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-black tracking-wide text-white flex items-center gap-2">
               <Gamepad2 className="w-6 h-6 text-purple-400" />
@@ -241,7 +258,7 @@ const App: React.FC = () => {
         </div>
 
         {/* PUBG ACCOUNTs */}
-        <div className="mt-20" id="pubg">
+        <div className="mt-20" ref={pubgRef} id="pubg">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-black tracking-wide text-white flex items-center gap-2">
               <Gamepad2 className="w-6 h-6 text-purple-400" />
@@ -375,7 +392,7 @@ const App: React.FC = () => {
                       {item.description}
                     </p>
                     <div className="inline-flex items-center gap-2 text-sm font-bold text-pink-400">
-                      <span>Open seller account link</span>
+                      <span>Accounts ရောင်းရန်</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>

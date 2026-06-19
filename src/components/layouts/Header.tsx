@@ -264,14 +264,14 @@ const Header: React.FC = () => {
             </div>
 
             {/* Signin or Signup Button */}
-            <div className="flex-1 lg:min-w-25 w-20 block relative">
+            {/* <div className="flex-1 lg:min-w-25 w-20 block relative">
               <Link
                 to="/signup"
                 className="px-3 w-full text-center py-2 text-white bg-pink-500 rounded-lg text-md font-medium absolute right-4 top-1/2 -translate-y-1/2"
               >
                 Login
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
 
