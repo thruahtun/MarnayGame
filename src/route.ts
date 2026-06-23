@@ -4,7 +4,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import AdminRootLayout from "./layouts/AdminRootLayout";
 import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
 import AdminAddListing from "./pages/admin/addListing/AdminAddListing";
-import AdminManageListing from "./pages/admin/manageListing/adminManageListing";
+import AdminManageListing from "./pages/admin/manageListing/AdminManageListing";
 
 export const router = createBrowserRouter([
   {
