@@ -1,5 +1,10 @@
 import { createBrowserRouter } from "react-router";
 import RootLayout from "./layouts/RootLayout";
+import LoginPage from "./pages/auth/LoginPage";
+import AdminRootLayout from "./layouts/AdminRootLayout";
+import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
+import AdminAddListing from "./pages/admin/addListing/AdminAddListing";
+import AdminManageListing from "./pages/admin/manageListing/adminManageListing";
 
 export const router = createBrowserRouter([
   {
@@ -14,4 +19,18 @@ export const router = createBrowserRouter([
       { path: "SeeMore", lazy: () => import("./pages/SeeMorePage").then(m => ({ Component: m.default })) },
     ],
   },
+  {
+    path: "/login",
+    Component: LoginPage,
+  },
+  {
+    path: "/admin-dashboard",
+    Component: AdminRootLayout,
+    children: [
+      { index: true, Component: AdminDashboard },
+      { path: "manage-listings" , Component:  AdminManageListing },
+      { path: "add-listing" , Component:  AdminAddListing }
+    ]
+  }
+  
 ]);

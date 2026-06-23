@@ -185,7 +185,7 @@ const Header: React.FC = () => {
               <Gamepad2 className="w-6 h-6 text-purple-400 group-hover:text-purple-300 transition-colors" />
             </div>
             <p className="font-black ml-3   text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400">
-              Deno & Marnay
+              Denoe & Marnay
               <span className="block text-gray-300 text-lg font-medium text-center relative">
                 {" "}
                 <span className="border-1 border-gray-300 absolute top-3 left-1 w-5"></span>{" "}

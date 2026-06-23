@@ -67,7 +67,7 @@ const GameC = ({ account }: { account: Listing }) => {
                 <div className="h-12 w-12 shrink-0 rounded-full border border-slate-700 bg-slate-800" />
               )}
               <div className="min-w-0">
-                <p className="truncate text-base font-bold text-white">Denoe</p>
+                <p className="truncate text-base font-bold text-white">Verified Seller</p>
                 <p className="truncate text-sm font-medium text-slate-400">
                   {seller?.username ?? "Seller"}
                 </p>

@@ -3,9 +3,36 @@ import { ArrowLeft, BadgeDollarSign, MessageCircle, PhoneCall, Send, ShieldCheck
 import mobileLegendImage from "@/assets/images/mobilelegend.jpg";
 import pubgImage from "@/assets/images/pubj.jpg";
 
-const telegramLink = "https://t.me/MarnayGameStore";
-const viberLink = "viber://chat?number=%2B959000000000";
-const messengerLink = "https://m.me/MarnayGameStore";
+import { getGames, type Game } from "@/lib/api";
+import { useEffect, useState } from "react";
+
+
+
+const getGameSlug = (name: string) => {
+  const normalizedName = name.toLowerCase();
+
+  if (normalizedName.includes("mobile legend")) {
+    return "mobile-legends";
+  }
+
+  if (normalizedName.includes("pubg")) {
+    return "pubg";
+  }
+
+  return normalizedName.replaceAll(" ", "-");
+};
+
+const getViberHref = (value?: string | null) => {
+  if (!value) {
+    return "";
+  }
+
+  if (value.startsWith("viber://") || value.startsWith("http")) {
+    return value;
+  }
+
+  return `viber://chat?number=${value.replace(/^\+/, "%2B")}`;
+};
 
 const sellerPageData = {
   "mobile-legends": {
@@ -26,7 +53,22 @@ const sellerPageData = {
 };
 
 const SellAccountPage = () => {
+
   const { gameType } = useParams();
+
+  const [games, setGames] = useState<Game[]>([]);
+
+  useEffect(() => {
+    getGames()
+      .then((data) => {
+        setGames(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  const currentGame = games.find((game) => getGameSlug(game.name) === gameType);
   const page = sellerPageData[gameType as keyof typeof sellerPageData] || sellerPageData["mobile-legends"];
 
   return (
@@ -101,7 +143,7 @@ const SellAccountPage = () => {
               <p className="mt-1 text-xs leading-5 text-slate-500">
                 <p>⚡️ Fake သတိပြုပေးပါ </p>
                 <p>
-                  ⭐️ ငွေလွှဲရာတွင် 09251355782 တလုံးထဲသုံးပါတယ်
+                  ⭐️ ငွေလွှဲရာတွင် {currentGame?.phone} တလုံးထဲသုံးပါတယ်
                   အရေးကြီးလျှင်ငွေလွှဲဖုန်းကို ဖုန်းဆက်နိုင်ပါတယ်
                 </p>
               </p>
@@ -110,7 +152,7 @@ const SellAccountPage = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <a
-              href={telegramLink}
+              href={currentGame?.telegram ?? undefined}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-sky-500 px-4 py-3 text-sm font-bold text-white hover:bg-sky-600 transition-colors"
@@ -119,7 +161,7 @@ const SellAccountPage = () => {
               <span>Telegram</span>
             </a>
             <a
-              href={viberLink}
+              href={getViberHref(currentGame?.viber)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-bold text-white hover:bg-purple-700 transition-colors"
@@ -128,7 +170,7 @@ const SellAccountPage = () => {
               <span>Viber</span>
             </a>
             <a
-              href={messengerLink}
+              href={currentGame?.messenger ?? undefined}
               target="_blank"
               rel="noreferrer"
               className="inline-flex col-span-2 sm:col-span-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-colors"
